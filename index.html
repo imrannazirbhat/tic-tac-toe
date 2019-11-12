@@ -1,0 +1,251 @@
+<!--*
+
+*** TIC TAC TOE GAME ***
+Author: Imran Nazir Bhat
+Dated: 12 Nov, 2019
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <style>
+  
+    .row_custom {
+
+      margin-top: 5px;
+      
+    }
+
+    .btn_custom {
+
+      margin: 5px;
+    }
+
+  </style>
+
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+
+          <template>
+              <div>
+                <v-toolbar  
+                >
+                  <v-toolbar-title>Tic Tac Toe</v-toolbar-title>
+            
+                  <v-spacer></v-spacer>
+
+                  <v-toolbar-items>
+                     
+                      <v-btn text @click="reset()">Reset</v-btn>
+
+                  </v-toolbar-items>
+            
+                   
+                </v-toolbar>
+              </div>
+            </template>
+
+
+        <v-container >
+
+            
+            <v-card
+            class="mx-auto"
+            max-width="232"
+            :disabled="won"
+          >
+            
+       
+        
+          <v-card-title >
+              
+          <v-row class="row_custom">
+              <v-btn class="btn_custom" @click="onStateChange(0,0)" >{{ state[0][0] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(0,1)" >{{ state[0][1] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(0,2)" >{{ state[0][2] }}</v-btn>
+          </v-row>
+
+          <v-row class="row_custom">
+              <v-btn class="btn_custom" @click="onStateChange(1,0)" >{{ state[1][0] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(1,1)" >{{ state[1][1] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(1,2)" >{{ state[1][2] }}</v-btn>
+          </v-row>
+
+          <v-row class="row_custom">
+              <v-btn class="btn_custom" @click="onStateChange(2,0)" >{{ state[2][0] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(2,1)" >{{ state[2][1] }}</v-btn>
+              <v-btn class="btn_custom" @click="onStateChange(2,2)" >{{ state[2][2] }}</v-btn>
+          </v-row>
+
+            </v-card-title>
+        
+            <v-card-subtitle>
+              {{message}}
+            </v-card-subtitle>
+        
+         
+            
+          </v-card>
+
+          
+          
+        </v-container>
+
+      </v-content>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+
+    
+    new Vue({
+      el: '#app',
+      vuetify: new Vuetify(),
+
+      data: () => ({
+
+        turn: 'X', // X or O
+        state: [['','',''],['','',''],['','','']],
+        message: "TURN: X",
+        won: false
+
+      }),
+
+      methods: {
+        onStateChange: function(row, col) {
+
+            if(this.state[row][col] == 'X' || this.state[row][col] == 'O') return;
+
+            this.state[row][col] = this.turn;
+            this.state[row].push('');
+            this.state[row].pop();
+
+            if(this.checkForWin() === true) {
+
+              this.won = true;
+              this.message = "Congratulations! U WON";
+              return;
+            }
+
+            
+            if(this.turn == 'X')
+            {
+              this.turn = 'O';
+              
+            } else {
+              this.turn = 'X';
+            }
+
+            this.message = "TURN: " + this.turn;
+
+        },
+
+        checkForWin: function() {
+
+
+          //Win states - have save value for:
+          //(0,0) (0,1) (0,2)
+          //(1,0) (1,1) (1,2)
+          //(2,0) (2,1) (2,2)
+
+          //(0,0) (1,0) (2,0)
+          //(1,1) (2,1) (2,2)
+          //(2,0) (1,2) (2,2)
+
+          //(0,0) (1,1) (2,2)
+          //(0,2) (1,1) (2,0)
+
+          if(this.state[0][0] == this.turn && 
+             this.state[0][1] == this.turn &&
+             this.state[0][2] == this.turn) {
+
+              
+              return true;
+          }
+
+          if(this.state[1][0] == this.turn && 
+             this.state[1][1] == this.turn &&
+             this.state[1][2] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[2][0] == this.turn && 
+             this.state[2][1] == this.turn &&
+             this.state[2][2] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[0][0] == this.turn && 
+             this.state[1][0] == this.turn &&
+             this.state[2][0] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[0][1] == this.turn && 
+             this.state[1][1] == this.turn &&
+             this.state[2][1] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[0][2] == this.turn && 
+             this.state[1][2] == this.turn &&
+             this.state[2][2] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[0][0] == this.turn && 
+             this.state[1][1] == this.turn &&
+             this.state[2][2] == this.turn) {
+
+              return true;
+          }
+
+          if(this.state[0][2] == this.turn && 
+             this.state[1][1] == this.turn &&
+             this.state[2][0] == this.turn) {
+
+              return true;
+          }
+
+          
+          return false;
+
+        },
+
+        getState: function(row, col) {
+
+          return this.state[row][col];
+        },
+        reset: function() {
+          this.turn = 'X';
+          this.state = [['','',''],['','',''],['','','']];
+          this.message = "TURN: X";
+          this.won = false;
+        }
+      },
+
+      mounted () {
+
+      }
+
+
+    })
+  </script>
+</body>
+</html>
